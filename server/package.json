@@ -1,0 +1,22 @@
+{
+  "name": "mocha-blog",
+  "version": "1.0.0",
+  "description": "The blog which everyone can define itself with a role.",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "blog",
+    "mocha"
+  ],
+  "author": "acupoflie",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.4",
+    "validator": "^13.12.0"
+  }
+}

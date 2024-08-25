@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import validator from 'validator'
+import bcrypt from 'bcryptjs'
 
 const userSchema = await mongoose.Schema({
     username: {
@@ -26,6 +27,7 @@ const userSchema = await mongoose.Schema({
         trim: true,
         minlength: [8, 'Password must be greater than 8 characters.'],
         maxlength: [128, 'Password must be less than 128 characters.'],
+        select: false
     },
     confirmPassword: {
         type: String,
@@ -42,8 +44,25 @@ const userSchema = await mongoose.Schema({
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
-    }
+    },
+    post: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
+    passwordChangedAt: Date
 })
+
+userSchema.pre('save', async function(next) {
+    if(!this.isModified('password')) return next()
+    
+    this.password = await bcrypt.hash(this.password, 12)
+    this.confirmPassword = undefined
+    next()
+})
+
+userSchema.methods.comparePasswordInDB = async function(pswd, pswdDb) {
+    return await bcrypt.compare(pswd, pswdDb)
+}
 
 const User = mongoose.model('User', userSchema);
 

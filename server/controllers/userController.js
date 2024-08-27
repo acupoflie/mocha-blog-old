@@ -15,9 +15,30 @@ export const getAllUsers = asyncErrorHandler(
     }
 )
 
-export const deleteUser = asyncErrorHandler(
+export const getUser = asyncErrorHandler(
+    async function(req, res, next) {
+        const id = req.params.id
+        const user = await User.findById(id)
+        
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user
+            }
+        })
+    }
+)
+
+export const updateMe = asyncErrorHandler(
     async function(req, res, next) {
         const id = req.params.id;
+        const user = await User.findByIdAndUpdate(id, req.body, {runValidators: true, new: true})
 
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user
+            }
+        })
     }
 )

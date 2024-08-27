@@ -21,6 +21,11 @@ const userSchema = await mongoose.Schema({
         lowercase: true
     },
     photo: String,
+    bio: {
+        type: String,
+        maxlength: [150, 'Max char for bio is 150.'],
+        trim: true
+    },
     password: {
         type: String,
         required: [true, 'Password is required.'],
@@ -34,7 +39,7 @@ const userSchema = await mongoose.Schema({
         required: [true, 'Please confirm your password.'],
         trim: true,
         validate: {
-            validator: function(value) {
+            validator: function (value) {
                 return this.password === value
             },
             message: 'Passwords are not same.'
@@ -45,23 +50,44 @@ const userSchema = await mongoose.Schema({
         enum: ['admin', 'user'],
         default: 'user'
     },
-    post: [{
+    posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
     }],
-    passwordChangedAt: Date
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
+    updatedAt: {
+        type: Date
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date
 })
 
-userSchema.pre('save', async function(next) {
-    if(!this.isModified('password')) return next()
-    
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next()
+
     this.password = await bcrypt.hash(this.password, 12)
     this.confirmPassword = undefined
     next()
 })
 
-userSchema.methods.comparePasswordInDB = async function(pswd, pswdDb) {
+userSchema.methods.comparePasswordInDB = async function (pswd, pswdDb) {
     return await bcrypt.compare(pswd, pswdDb)
+}
+
+userSchema.methods.isAdmin = async function (role) {
+    return role === this.role
+}
+
+userSchema.methods.isPasswordChanged = async function (iat) {
+    if (this.passwordChangedAt) {
+        const passwordChangedAtTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
+        return iat < passwordChangedAtTimestamp
+    }
+    return false
 }
 
 const User = mongoose.model('User', userSchema);

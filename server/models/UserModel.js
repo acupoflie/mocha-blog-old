@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
+import { genPassword, validPassword } from '../utils/validPassAndSignJwt.js'
 
 const userSchema = await mongoose.Schema({
     username: {
@@ -21,47 +22,85 @@ const userSchema = await mongoose.Schema({
         lowercase: true
     },
     photo: String,
+    bio: {
+        type: String,
+        maxlength: [150, 'Max char for bio is 150.'],
+        trim: true
+    },
     password: {
         type: String,
+        select: false,
         required: [true, 'Password is required.'],
         trim: true,
         minlength: [8, 'Password must be greater than 8 characters.'],
-        maxlength: [128, 'Password must be less than 128 characters.'],
-        select: false
+        maxlength: [128, 'Password must be less than 128 characters.']
     },
     confirmPassword: {
         type: String,
         required: [true, 'Please confirm your password.'],
         trim: true,
         validate: {
-            validator: function(value) {
+            validator: function (value) {
                 return this.password === value
             },
             message: 'Passwords are not same.'
         }
+    },
+    salt:{
+        type: String,
+        select: false
     },
     role: {
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
     },
-    post: [{
+    posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
     }],
-    passwordChangedAt: Date
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
+    updatedAt: {
+        type: Date
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date
+},
+{
+    toObject: {useProjection: true},
+    toJSON: {useProjection: true}
 })
 
-userSchema.pre('save', async function(next) {
-    if(!this.isModified('password')) return next()
-    
-    this.password = await bcrypt.hash(this.password, 12)
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next()
+
+    const hashSalt = genPassword(this.password);
+
+    this.password = hashSalt.hash
+    this.salt = hashSalt.salt
     this.confirmPassword = undefined
     next()
 })
 
-userSchema.methods.comparePasswordInDB = async function(pswd, pswdDb) {
-    return await bcrypt.compare(pswd, pswdDb)
+// TODO
+userSchema.methods.comparePasswordInDB = async function (password, hash, salt) {
+    return validPassword(password, hash, salt)
+}
+
+userSchema.methods.isAdmin = async function (role) {
+    return role === this.role
+}
+
+userSchema.methods.isPasswordChanged = async function (iat) {
+    if (this.passwordChangedAt) {
+        const passwordChangedAtTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
+        return iat < passwordChangedAtTimestamp
+    }
+    return false
 }
 
 const User = mongoose.model('User', userSchema);

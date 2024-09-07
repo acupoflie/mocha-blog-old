@@ -1,6 +1,7 @@
 
 import dotenv from 'dotenv'
 dotenv.config({path: './config.env'})
+// console.log(process.env)
 
 import app from './app.js'
 import mongoose from 'mongoose'

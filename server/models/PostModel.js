@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Must be an article.'],
         minlength: [2, 'Min. 2 character.'],
-        maxlength: [18, 'Max. 18 character'],
+        maxlength: [25, 'Max. 25 character'],
         trim: true
     },
     content: {
@@ -23,6 +23,16 @@ const postSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now()
+    },
+    updatedAt: {
+        type: Date
+    },
+    tags: {
+        type: [String]
+    },
+    totalLikes: {
+        type: Number,
+        default: 0
     }
 })
 

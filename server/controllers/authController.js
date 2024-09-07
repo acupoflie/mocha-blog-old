@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import CustomError from '../utils/CustomError.js'
 import crypto from 'crypto'
 import sendMail from '../utils/nodemailer.js'
+import passport from "passport";
 
 export const createUser = asyncErrorHandler(
     async function (req, res, next) {
@@ -64,25 +65,18 @@ export const protect = asyncErrorHandler(
         const testToken = req.headers.authorization;
         let token;
         if (testToken && testToken.startsWith('Bearer')) {
-            token = testToken.split(' ')[1]
+            token = testToken.split(' ')[1];
         }
 
         // Verifying token
-        const decodedToken = await jwt.verify(token, process.env.SECRET_JWT)
-
-        // Checking existence of user
-        const user = await User.findById(decodedToken.id)
-        if (!user) {
-            return next(new CustomError('User no exists anymore.'))
-        }
-
-        const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat)
-        if(isPasswordChanged) {
-            next(new CustomError('The password has changed. Please log in again.', 403))
-        }
-
-        req.user = user
-        next()
+        passport.authenticate('jwt', {session: false}, (err, user, info) => {
+            if(err || !user) {
+                return next(new CustomError('Unauthorized blaaaaaaa', 401))
+            }
+            console.log('bro')
+            req.user = user
+            next()
+        })(req, res, next)
     }
 )
 

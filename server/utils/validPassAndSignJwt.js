@@ -11,12 +11,14 @@ export const signJWT = id => {
         iat: Date.now()
     }
 
-    const signedToken =  jwt.sign({id}, PRIV_KEY, {
+    const signedToken =  jwt.sign(payload, PRIV_KEY, {
         expiresIn: process.env.LOGIN_EXPIRES,
         algorithm: 'RS256'
     })
 
-    return 'Bearer ' + signedToken
+    //TODO 
+    //! LATER ADD Bearer BEGIN TO SIGNEDTOKEN
+    return signedToken
     
 }
 

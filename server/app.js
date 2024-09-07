@@ -1,7 +1,7 @@
 import express from 'express';
 import errorHandler from './controllers/errorController.js';
 import passport from 'passport'
-import { jwtStrategy } from './utils/passport.js';
+import configurePassport from './utils/passport.js';
 
 const app = express()
 
@@ -12,11 +12,11 @@ import postRouter from './routes/postRouter.js';
 import userRouter from './routes/userRouter.js';
 
 // USING MIDDLEWARES
+configurePassport(passport)
+app.use(passport.initialize())
+
 app.use(express.json())
 app.use(express.static('../client'))
-
-passport.use(jwtStrategy)
-app.use(passport.initialize())
 
 // CONNECTING ROUTES
 app.use(authRouter)

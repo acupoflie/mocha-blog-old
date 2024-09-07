@@ -1,5 +1,5 @@
 import User from "../models/UserModel.js";
-import signJWT from "../utils/signjwt.js";
+import {signJWT, validPassword, genPassword} from '../utils/validPassAndSignJwt.js';
 import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import jwt from 'jsonwebtoken';
 import CustomError from '../utils/CustomError.js'
@@ -37,12 +37,12 @@ export const login = asyncErrorHandler(
             return next(new CustomError('Email or password is empty.'))
         }
 
-        const user = await User.findOne({ email }).select('+password')
+        const user = await User.findOne({ email }).select('+password +salt')
         if (!user) {
             return next(new CustomError('No such user with this email.'))
         }
 
-        if (!(await user.comparePasswordInDB(password, user.password))) {
+        if (!(await user.comparePasswordInDB(password, user.password, user.salt))) {
             return next(new CustomError('Password is wrong'))
         }
 

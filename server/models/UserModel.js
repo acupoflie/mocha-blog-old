@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
+import { genPassword, validPassword } from '../utils/validPassAndSignJwt.js'
 
 const userSchema = await mongoose.Schema({
     username: {
@@ -28,11 +29,11 @@ const userSchema = await mongoose.Schema({
     },
     password: {
         type: String,
+        select: false,
         required: [true, 'Password is required.'],
         trim: true,
         minlength: [8, 'Password must be greater than 8 characters.'],
-        maxlength: [128, 'Password must be less than 128 characters.'],
-        select: false
+        maxlength: [128, 'Password must be less than 128 characters.']
     },
     confirmPassword: {
         type: String,
@@ -44,6 +45,10 @@ const userSchema = await mongoose.Schema({
             },
             message: 'Passwords are not same.'
         }
+    },
+    salt:{
+        type: String,
+        select: false
     },
     role: {
         type: String,
@@ -64,18 +69,26 @@ const userSchema = await mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetTokenExpires: Date
+},
+{
+    toObject: {useProjection: true},
+    toJSON: {useProjection: true}
 })
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next()
 
-    this.password = await bcrypt.hash(this.password, 12)
+    const hashSalt = genPassword(this.password);
+
+    this.password = hashSalt.hash
+    this.salt = hashSalt.salt
     this.confirmPassword = undefined
     next()
 })
 
-userSchema.methods.comparePasswordInDB = async function (pswd, pswdDb) {
-    return await bcrypt.compare(pswd, pswdDb)
+// TODO
+userSchema.methods.comparePasswordInDB = async function (password, hash, salt) {
+    return validPassword(password, hash, salt)
 }
 
 userSchema.methods.isAdmin = async function (role) {

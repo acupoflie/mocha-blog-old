@@ -15,12 +15,15 @@
   "author": "acupoflie",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^22.5.4",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.4",
     "nodemailer": "^6.9.14",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "validator": "^13.12.0"
   }
 }

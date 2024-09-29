@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  nginx:
+    ports:
+      - 3000:80
+  nodeapp:
+    build: 
+      context: .
+      args:
+        - NODE_ENV=development
+    environment:
+      - MONGO_USER=daupa
+      - MONGO_PASSWORD=mypass
+    volumes:
+      - ./:/app
+      - /app/node_modules
+  mongo:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=daupa
+      - MONGO_INITDB_ROOT_PASSWORD=mypass

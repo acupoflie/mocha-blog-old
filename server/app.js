@@ -15,13 +15,14 @@ import userRouter from './routes/userRouter.js';
 configurePassport(passport)
 app.use(passport.initialize())
 
+app.set('trust proxy')
 app.use(express.json())
 app.use(express.static('../client'))
 
 // CONNECTING ROUTES
-app.use(authRouter)
-app.use(postRouter)
-app.use(userRouter)
+app.use("/api", authRouter)
+app.use("/api", postRouter)
+app.use("/api", userRouter)
 
 // GLOBAL ERROR HANDLER
 app.use(errorHandler)

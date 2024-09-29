@@ -4,7 +4,7 @@ COPY package.json /app/
 # ARG NODE_ENV
 # RUN if [ "$NODE_ENV" = "development" ]; \
 #         then npm install; \
-#         else npm install --only=production; \
+#         else npm install --only-production; \
 #         fi
 RUN npm install
 COPY . ./

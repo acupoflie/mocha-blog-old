@@ -1,5 +1,5 @@
 
-import { MONGO_IP, MONGO_PORT } from './config.js'
+import { MONGO_IP, MONGO_PORT, MONGO_USER, MONGO_PASSWORD } from './config.js'
 
 import dotenv from 'dotenv'
 dotenv.config({path: './config.env'})
@@ -8,10 +8,12 @@ dotenv.config({path: './config.env'})
 import app from './app.js'
 import mongoose from 'mongoose'
 
-mongoose.connect(MONGO_IP).then((res) => {
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`
+mongoose.connect(mongoURL).then((res) => {
     console.log('db connection successfull')
 })
 
-app.listen(MONGO_PORT, () => {
-    console.log('server has started')
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+    console.log(`server has started on port ${port}`)
 })

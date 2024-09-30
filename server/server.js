@@ -15,5 +15,5 @@ mongoose.connect(mongoURL).then((res) => {
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
-    console.log(`server has started on port ${port}`)
+    console.log(`server has started on portt ${port}`)
 })

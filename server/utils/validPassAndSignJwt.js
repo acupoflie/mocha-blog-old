@@ -1,8 +1,13 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const PRIV_KEY = fs.readFileSync('id_rsa_priv.pem', 'utf-8')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const PRIV_KEY = fs.readFileSync(path.join(__dirname, '..', 'id_rsa_priv.pem'), 'utf-8')
 
 export const signJWT = id => {
 

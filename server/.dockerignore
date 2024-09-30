@@ -4,4 +4,4 @@ Dockerfile
 .git
 .gitignore
 docker-compose*
-id_rsa_priv.pem
+#id_rsa_priv.pem

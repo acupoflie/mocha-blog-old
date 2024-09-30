@@ -4,13 +4,6 @@ services:
     ports:
       - 80:80
       - 443:443
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
   nodeapp:
     build: 
       context: .

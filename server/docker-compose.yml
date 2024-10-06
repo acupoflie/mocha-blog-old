@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-  nginx:
-    image: nginx
-    ports:
-      - 3000:80
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+  # nginx:
+  #   image: nginx
+  #   ports:
+  #     - 3000:80
+  #   volumes:
+  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
   nodeapp: 
     build: .
     image: acupoflie/mocha-api

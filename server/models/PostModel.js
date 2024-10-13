@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Must be an article.'],
         minlength: [2, 'Min. 2 character.'],
-        maxlength: [25, 'Max. 25 character'],
+        maxlength: [50, 'Max. 25 character'],
         trim: true
     },
     content: {
@@ -15,6 +15,10 @@ const postSchema = new mongoose.Schema({
         minlength: [1, 'Min. 1 character.'],
         maxlength: [2000, 'Max. 2000 character'],
     },
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -31,6 +35,10 @@ const postSchema = new mongoose.Schema({
         type: [String]
     },
     totalLikes: {
+        type: Number,
+        default: 0
+    },
+    totalComments: {
         type: Number,
         default: 0
     }

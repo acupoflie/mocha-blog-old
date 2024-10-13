@@ -3,11 +3,10 @@ import User from "../models/UserModel.js";
 import Like from "../models/PostLikeModel.js";
 import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import CustomError from "../utils/CustomError.js";
+import Comment from "../models/PostCommentModel.js";
 
 export const createPost = asyncErrorHandler(
     async function(req, res, next) {
-        const {title, content} = req.body;
-
         const postBody = Object.assign(req.body, {author: req.user.id})
         const post = await Post.create(postBody);
 
@@ -78,5 +77,19 @@ export const likePost = asyncErrorHandler(
                 status: 'you liked the post'
             })
         }
+    }
+)
+
+export const commentPost = asyncErrorHandler(
+    async function(req, res, next) {
+        const comment = await Comment.create(Object.assign(req.body, req.user.id));
+        await User.findByIdAndUpdate(req.user.id, {$push: {comments: comment.id}})
+        await Post.findByIdAndUpdate(req.params.postid, {$push: {comments: comment.id}, $inc: {totalComments: 1}})
+        res.status(201).json({
+            status: "success",
+            data: {
+                comment
+            }
+        })
     }
 )

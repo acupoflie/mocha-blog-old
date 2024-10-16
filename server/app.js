@@ -2,6 +2,8 @@ import express from 'express';
 import errorHandler from './controllers/errorController.js';
 import passport from 'passport'
 import configurePassport from './utils/passport.js';
+import helmet from 'helmet';
+import cors from 'cors'
 
 const app = express()
 
@@ -15,6 +17,13 @@ import userRouter from './routes/userRouter.js';
 configurePassport(passport)
 app.use(passport.initialize())
 
+app.use(helmet())
+const corsOptions = {
+    origin: 'https://2047854.playcode.io', // Replace with your front-end URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+};
+app.use(cors(corsOptions))
 app.set('trust proxy')
 app.use(express.json())
 app.use(express.static('../client'))

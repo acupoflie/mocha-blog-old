@@ -11,7 +11,7 @@ services:
     environment:
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
-      - LOGIN_EXPIRES=${LOGIN_EXPIRES)
+      - LOGIN_EXPIRES=${LOGIN_EXPIRES}
       - NODE_ENV=production
   mongo:
     environment:

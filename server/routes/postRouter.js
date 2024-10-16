@@ -1,8 +1,11 @@
 import express from 'express';
 import { protect } from '../controllers/authController.js';
-import { createPost, editPost, deletePost, likePost, commentPost } from '../controllers/postController.js';
+import { createPost, editPost, deletePost, likePost, commentPost, getUserPosts } from '../controllers/postController.js';
 
 const postRouter = express.Router();
+
+postRouter.route('/posts/:username')
+    .get(getUserPosts)
 
 postRouter.route('/posts')
     .post(protect, createPost)

@@ -5,6 +5,28 @@ import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import CustomError from "../utils/CustomError.js";
 import Comment from "../models/PostCommentModel.js";
 
+export const getUserPosts = asyncErrorHandler(
+    async function(req, res, next) {
+        const username = req.params.username;
+        const user = await User.findOne({username}).populate('posts').exec();
+        if(!user) {
+            return res.status(404).json({
+                status: "User does not exists"
+            })
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                length: user.posts.length,
+                data: {
+                    posts: user.posts
+                }
+            }
+        })
+    }
+)
+
 export const createPost = asyncErrorHandler(
     async function(req, res, next) {
         const postBody = Object.assign(req.body, {author: req.user.id})

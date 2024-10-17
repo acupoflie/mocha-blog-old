@@ -21,7 +21,7 @@ app.use(helmet())
 const corsOptions = {
     origin: 'https://2047854.playcode.io', // Replace with your front-end URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions))
 app.set('trust proxy')

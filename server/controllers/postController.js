@@ -8,7 +8,7 @@ import Comment from "../models/PostCommentModel.js";
 export const getUserPosts = asyncErrorHandler(
     async function(req, res, next) {
         const username = req.params.username;
-        const user = await User.findOne({username}).populate('posts').exec();
+        const user = await User.findOne({username}).lean().populate('posts').exec();
         if(!user) {
             return res.status(404).json({
                 status: "User does not exists"
